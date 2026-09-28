@@ -124,9 +124,10 @@ function createOnlineRoom() {
   if (!window.Peer) { toast("Online service could not load. Check your connection."); return; }
   playerColor = "w"; peer = new Peer();
   peer.on("open", (id) => {
-    roomCode = id; $("invite-code").textContent = id.slice(-6).toUpperCase();
+    roomCode = id; $("invite-code").textContent = id;
     const url = `${location.href.split("#")[0]}#join=${id}`;
     $("copy-link").dataset.link = url; show("invite-panel", true);
+    $("invite-status").textContent = "Share this code or copy the invite link to play with a friend.";
   });
   peer.on("connection", (conn) => {
     if (connection?.open) { conn.close(); return; }
@@ -142,7 +143,10 @@ function createOnlineRoom() {
 }
 function joinOnlineRoom(id) {
   if (!window.Peer) { toast("Online service could not load. Check your connection."); return; }
-  playerColor = "b"; peer = new Peer();
+  roomCode = id; playerColor = "b"; $("invite-code").textContent = id;
+  $("copy-link").dataset.link = `${location.href.split("#")[0]}#join=${id}`;
+  $("invite-status").textContent = "Connecting to your friend's game…"; show("invite-panel", true);
+  peer = new Peer();
   peer.on("open", () => {
     connection = peer.connect(id);
     setupConnection(connection);
@@ -176,12 +180,36 @@ function setupConnection(conn) {
     toast("Connection error. Check your internet connection.");
   });
 }
+function roomIdFromInvite(value) {
+  const invite = value.trim();
+  if (!invite) return "";
+  try {
+    const url = new URL(invite, location.href);
+    const roomId = new URLSearchParams(url.hash.slice(1)).get("join");
+    if (roomId) return roomId.trim();
+  } catch {
+    return invite;
+  }
+  return invite;
+}
 $("computer-btn").onclick = () => beginGame("computer", $("difficulty").value);
 $("local-btn").onclick = () => beginGame("local");
 $("online-btn").onclick = createOnlineRoom;
+$("join-btn").onclick = () => {
+  const roomId = roomIdFromInvite($("join-code").value);
+  if (!roomId) { toast("Enter your friend's invite code or link."); return; }
+  joinOnlineRoom(roomId);
+};
+$("join-code").addEventListener("keydown", (event) => {
+  if (event.key === "Enter") $("join-btn").click();
+});
+$("copy-code").onclick = async () => {
+  try { await navigator.clipboard.writeText(roomCode); toast("Invite code copied."); }
+  catch { toast(roomCode); }
+};
 $("copy-link").onclick = async (event) => { const link = event.currentTarget.dataset.link; try { await navigator.clipboard.writeText(link); toast("Invite link copied."); } catch { toast(link); } };
 $("back-btn").onclick = () => { show("game", false); show("lobby", true); };
 $("new-game-btn").onclick = () => beginGame(mode, difficulty);
 $("resign-btn").onclick = () => { if (!chess.game_over() && !resigned) { toast("You resigned."); resigned = true; render(); } };
 const joinId = new URLSearchParams(location.hash.replace("#", "?")).get("join");
-if (joinId) { joinOnlineRoom(joinId); $("invite-status").textContent = "Connecting to your friend's game…"; show("invite-panel", true); }
+if (joinId) joinOnlineRoom(joinId);

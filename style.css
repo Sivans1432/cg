@@ -32,9 +32,17 @@ button { font:600 13px inherit; cursor:pointer; border:0; transition:.2s ease; }
 .secondary-btn { background:transparent; border:1px solid #d7d1c3; color:var(--ink); padding:13px 12px; border-radius:8px; }
 .secondary-btn:hover { background:#fff; border-color:var(--accent); }
 .secondary-btn span { color:var(--accent); margin-right:5px; }
+.join-panel { margin-top:17px; }
+.join-controls { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; }
+.join-controls input { min-width:0; width:100%; border:1px solid #e0ddd5; border-radius:8px; padding:12px; color:var(--ink); font:500 12px "DM Sans",sans-serif; }
+.join-controls input:focus { outline:2px solid #d96b4b55; border-color:var(--accent); }
+.join-controls .secondary-btn { padding:11px 13px; white-space:nowrap; }
+.join-panel p { font-size:11px; color:var(--muted); margin:8px 0 0; }
 .invite-panel { margin-top:17px; padding:14px; background:#fffaf0; border:1px dashed #d7cbb3; border-radius:8px; text-align:center; }
-.invite-panel strong { display:block; letter-spacing:5px; font-size:22px; margin:3px 0 9px; }
+.invite-panel strong { display:block; overflow-wrap:anywhere; font-size:15px; margin:3px 0 9px; }
+.invite-actions { display:flex; justify-content:center; gap:8px; }
 .copy-btn { background:var(--ink); color:#fff; border-radius:6px; padding:9px 14px; font-size:11px; }
+.copy-btn.secondary-copy { background:transparent; border:1px solid #d7d1c3; color:var(--ink); }
 .invite-panel p { font-size:11px; color:var(--muted); margin:9px 0 0; }
 .hidden { display:none !important; }
 .game-screen { padding:34px 42px 20px; }
