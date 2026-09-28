@@ -77,12 +77,15 @@
         </div>
         <div class="game-layout">
           <aside class="game-info">
-            <div class="player-card active" id="white-player"><span class="player-piece">♔</span><div><strong>You</strong><small>White</small></div><span class="turn-mark"></span></div>
             <div class="status-card"><span class="status-label">MATCH STATUS</span><strong id="status-text">Your move</strong><p id="status-detail">Select a piece to begin.</p></div>
             <div class="move-list-wrap"><span class="status-label">MOVE HISTORY</span><ol id="move-list"></ol></div>
             <button id="resign-btn" class="text-btn">Resign game</button>
           </aside>
-          <div class="board-wrap"><div id="board" class="board" aria-label="Chess board"></div><div class="board-coordinates bottom"><span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span></div></div>
+          <div class="board-wrap">
+            <div class="player-card active" id="player-card"><span class="player-piece">♔</span><div><strong>You</strong><small>White</small></div><span class="turn-mark"></span></div>
+            <div id="board" class="board" aria-label="Chess board"></div>
+            <div class="board-coordinates bottom"><span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span></div>
+          </div>
         </div>
       </section>
 

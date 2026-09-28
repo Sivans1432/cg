@@ -13,10 +13,14 @@ function beginGame(nextMode, level = "easy") {
 function render() {
   const board = $("board"); board.innerHTML = "";
   const history = chess.history({ verbose: true }); lastMove = history.at(-1);
+  const flipped = mode === "online" && playerColor === "b";
   const isHumanTurn = mode === "local" || (mode === "computer" && chess.turn() === "w") || (mode === "online" && chess.turn() === playerColor);
   const legalTargets = selected ? chess.moves({ square: selected, verbose: true }).map((m) => m.to) : [];
   for (let row = 0; row < 8; row++) for (let col = 0; col < 8; col++) {
-    const square = String.fromCharCode(97 + col) + (8 - row), piece = chess.get(square);
+    const square = flipped
+      ? String.fromCharCode(104 - col) + (row + 1)
+      : String.fromCharCode(97 + col) + (8 - row);
+    const piece = chess.get(square);
     const el = document.createElement("div");
     el.className = `square ${(row + col) % 2 ? "dark" : "light"}`;
     if (selected === square) el.classList.add("selected");
@@ -29,6 +33,9 @@ function render() {
     el.addEventListener("click", () => clickSquare(square));
     board.appendChild(el);
   }
+  const files = $("board").parentElement.querySelectorAll(".board-coordinates span");
+  files.forEach((file, index) => { file.textContent = String.fromCharCode((flipped ? 104 : 97) + (flipped ? -index : index)); });
+  board.setAttribute("aria-label", `Chess board, ${flipped ? "Black" : "White"} at the bottom`);
   const turn = chess.turn() === "w" ? "White" : "Black";
   const over = resigned || chess.game_over();
   $("game-title").textContent = over ? resultText() : (isHumanTurn ? "Your turn" : mode === "online" ? "Waiting for your friend…" : mode === "computer" ? "Computer is thinking…" : `${turn} to move`);
@@ -40,9 +47,10 @@ function render() {
       : mode === "online" && !isHumanTurn
         ? "Waiting for your friend to move."
         : "Select a piece to begin.";
-  const cardPiece = $("white-player").querySelector(".player-piece");
-  const cardName = $("white-player").querySelector("strong");
-  const cardColor = $("white-player").querySelector("small");
+  const playerCard = $("player-card");
+  const cardPiece = playerCard.querySelector(".player-piece");
+  const cardName = playerCard.querySelector("strong");
+  const cardColor = playerCard.querySelector("small");
   if (mode === "online") {
     cardPiece.textContent = playerColor === "w" ? "♔" : "♚";
     cardName.textContent = "You";
@@ -52,7 +60,7 @@ function render() {
     cardName.textContent = "You";
     cardColor.textContent = "White";
   }
-  $("white-player").classList.toggle("active", chess.turn() === playerColor && !over);
+  playerCard.classList.toggle("active", chess.turn() === playerColor && !over);
   $("move-list").innerHTML = "";
   for (let i = 0; i < history.length; i += 2) {
     const li = document.createElement("li"); li.innerHTML = `<span>${i / 2 + 1}</span><b>${history[i]?.san || ""}</b><b>${history[i + 1]?.san || ""}</b>`; $("move-list").appendChild(li);
