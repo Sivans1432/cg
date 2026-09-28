@@ -120,35 +120,59 @@ function minimax(depth, maximizing) {
   for (const move of chess.moves({ verbose: true })) { chess.move(move); const score = minimax(depth - 1, !maximizing); chess.undo(); best = maximizing ? Math.max(best, score) : Math.min(best, score); }
   return best;
 }
+function generateRoomCode() {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const randomValues = new Uint8Array(6);
+  window.crypto.getRandomValues(randomValues);
+  return Array.from(randomValues, (value) => alphabet[value & 31]).join("");
+}
 function createOnlineRoom() {
   if (!window.Peer) { toast("Online service could not load. Check your connection."); return; }
-  playerColor = "w"; peer = new Peer();
-  peer.on("open", (id) => {
-    roomCode = id; $("invite-code").textContent = id;
-    const url = `${location.href.split("#")[0]}#join=${id}`;
-    $("copy-link").dataset.link = url; show("invite-panel", true);
-    $("invite-status").textContent = "Share this code or copy the invite link to play with a friend.";
-  });
-  peer.on("connection", (conn) => {
-    if (connection?.open) { conn.close(); return; }
-    setupConnection(conn);
-    beginGame("online");
-    $("invite-status").textContent = "Friend connected. You are White.";
-    toast("Friend joined your game.");
-  });
-  peer.on("error", (error) => {
-    $("invite-status").textContent = error.message || "Could not create an invite. Please try again.";
-    toast("Could not create an invite. Please try again.");
-  });
+  playerColor = "w";
+  let attempts = 0;
+  const createPeer = () => {
+    const code = generateRoomCode();
+    roomCode = code;
+    $("invite-code").textContent = code;
+    $("invite-status").textContent = "Creating your invite code…";
+    show("invite-panel", true);
+    const hostPeer = new Peer(code);
+    peer = hostPeer;
+    hostPeer.on("open", () => {
+      const url = `${location.href.split("#")[0]}#join=${code}`;
+      $("copy-link").dataset.link = url;
+      $("invite-status").textContent = "Share this 6-character code or copy the invite link to play with a friend.";
+    });
+    hostPeer.on("connection", (conn) => {
+      if (connection?.open) { conn.close(); return; }
+      setupConnection(conn);
+      beginGame("online");
+      $("invite-status").textContent = "Friend connected. You are White.";
+      toast("Friend joined your game.");
+    });
+    hostPeer.on("error", (error) => {
+      if (peer !== hostPeer) return;
+      if (error.type === "unavailable-id" && attempts < 5) {
+        attempts++;
+        hostPeer.destroy();
+        createPeer();
+        return;
+      }
+      $("invite-status").textContent = error.message || "Could not create an invite. Please try again.";
+      toast("Could not create an invite. Please try again.");
+    });
+  };
+  createPeer();
 }
 function joinOnlineRoom(id) {
   if (!window.Peer) { toast("Online service could not load. Check your connection."); return; }
-  roomCode = id; playerColor = "b"; $("invite-code").textContent = id;
-  $("copy-link").dataset.link = `${location.href.split("#")[0]}#join=${id}`;
+  roomCode = /^[a-z0-9]{6}$/i.test(id) ? id.toUpperCase() : id;
+  playerColor = "b"; $("invite-code").textContent = roomCode;
+  $("copy-link").dataset.link = `${location.href.split("#")[0]}#join=${roomCode}`;
   $("invite-status").textContent = "Connecting to your friend's game…"; show("invite-panel", true);
   peer = new Peer();
   peer.on("open", () => {
-    connection = peer.connect(id);
+    connection = peer.connect(roomCode);
     setupConnection(connection);
   });
   peer.on("error", (error) => {
@@ -190,7 +214,7 @@ function roomIdFromInvite(value) {
   } catch {
     return invite;
   }
-  return invite;
+  return /^[a-z0-9]{6}$/i.test(invite) ? invite.toUpperCase() : invite;
 }
 $("computer-btn").onclick = () => beginGame("computer", $("difficulty").value);
 $("local-btn").onclick = () => beginGame("local");
