@@ -6,23 +6,35 @@
     <title>Checkmate — Chess</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <main class="app-shell">
       <header class="topbar">
-        <a class="brand" href="./"><span class="brand-mark">♞</span><span>Checkmate</span></a>
-        <div class="topbar-actions"><span class="live-dot"></span><span>Play online or offline</span></div>
+        <a class="brand" href="./"
+          ><span class="brand-mark">♞</span><span>Checkmate</span></a
+        >
+        <div class="topbar-actions">
+          <span class="live-dot"></span><span>Play online or offline</span>
+        </div>
       </header>
 
       <section class="hero">
         <div>
           <p class="eyebrow">A quiet board. A loud victory.</p>
           <h1>Your next <em>great</em> game starts here.</h1>
-          <p class="hero-copy">Choose your opponent, make your move, and let the board tell the story.</p>
+          <p class="hero-copy">
+            Choose your opponent, make your move, and let the board tell the
+            story.
+          </p>
         </div>
-        <div class="hero-badge"><span>♔</span><strong>64</strong><small>squares of possibility</small></div>
+        <div class="hero-badge">
+          <span>♔</span><strong>64</strong><small>squares of possibility</small>
+        </div>
       </section>
 
       <section id="lobby" class="lobby-grid">
@@ -30,29 +42,45 @@
           <div class="card-icon">♟</div>
           <p class="card-kicker">Solo challenge</p>
           <h2>Play computer</h2>
-          <p>Test your tactics against an opponent that adapts to your style.</p>
+          <p>
+            Test your tactics against an opponent that adapts to your style.
+          </p>
           <label for="difficulty">Choose difficulty</label>
           <select id="difficulty">
             <option value="easy">Easy · casual moves</option>
             <option value="medium">Medium · thoughtful play</option>
             <option value="hard">Hard · deep strategy</option>
           </select>
-          <button id="computer-btn" class="primary-btn">Play computer <span>→</span></button>
+          <button id="computer-btn" class="primary-btn">
+            Play computer <span>→</span>
+          </button>
         </article>
 
         <article class="mode-card featured">
           <div class="card-icon">♔</div>
           <p class="card-kicker">Two players</p>
           <h2>Play a friend</h2>
-          <p>Share a room with someone beside you, or invite a friend anywhere.</p>
+          <p>
+            Share a room with someone beside you, or invite a friend anywhere.
+          </p>
           <div class="friend-options">
-            <button id="local-btn" class="secondary-btn"><span>▣</span> Same device</button>
-            <button id="online-btn" class="secondary-btn"><span>↗</span> Generate invite link</button>
+            <button id="local-btn" class="secondary-btn">
+              <span>▣</span> Same device
+            </button>
+            <button id="online-btn" class="secondary-btn">
+              <span>↗</span> Generate invite link
+            </button>
           </div>
           <div class="join-panel">
             <label for="join-code">JOIN WITH AN INVITE CODE OR LINK</label>
             <div class="join-controls">
-              <input id="join-code" type="text" placeholder="Paste your friend's code or link" autocomplete="off" spellcheck="false" />
+              <input
+                id="join-code"
+                type="text"
+                placeholder="Paste your friend's code or link"
+                autocomplete="off"
+                spellcheck="false"
+              />
               <button id="join-btn" class="secondary-btn">Join game</button>
             </div>
             <p>Ask your friend to share their invite code or link.</p>
@@ -61,10 +89,14 @@
             <span class="invite-label">INVITE CODE</span>
             <strong id="invite-code">------</strong>
             <div class="invite-actions">
-              <button id="copy-code" class="copy-btn secondary-copy">Copy code</button>
+              <button id="copy-code" class="copy-btn secondary-copy">
+                Copy code
+              </button>
               <button id="copy-link" class="copy-btn">Copy invite link</button>
             </div>
-            <p id="invite-status">Your friend can open this link on another device.</p>
+            <p id="invite-status">
+              Your friend can open this link on another device.
+            </p>
           </div>
         </article>
       </section>
@@ -72,19 +104,38 @@
       <section id="game" class="game-screen hidden">
         <div class="game-heading">
           <button id="back-btn" class="back-btn">← Lobby</button>
-          <div><p class="eyebrow">The game is on</p><h2 id="game-title">Your turn</h2></div>
-          <button id="new-game-btn" class="secondary-btn compact">New game</button>
+          <div>
+            <p class="eyebrow">The game is on</p>
+            <h2 id="game-title">Your turn</h2>
+          </div>
+          <button id="new-game-btn" class="secondary-btn compact">
+            New game
+          </button>
         </div>
         <div class="game-layout">
           <aside class="game-info">
-            <div class="status-card"><span class="status-label">MATCH STATUS</span><strong id="status-text">Your move</strong><p id="status-detail">Select a piece to begin.</p></div>
-            <div class="move-list-wrap"><span class="status-label">MOVE HISTORY</span><ol id="move-list"></ol></div>
+            <div class="status-card">
+              <span class="status-label">MATCH STATUS</span
+              ><strong id="status-text">Your move</strong>
+              <p id="status-detail">Select a piece to begin.</p>
+            </div>
+            <div class="move-list-wrap">
+              <span class="status-label">MOVE HISTORY</span>
+              <ol id="move-list"></ol>
+            </div>
             <button id="resign-btn" class="text-btn">Resign game</button>
           </aside>
           <div class="board-wrap">
-            <div class="player-card active" id="player-card"><span class="player-piece">♔</span><div><strong>You</strong><small>White</small></div><span class="turn-mark"></span></div>
+            <div class="player-card active" id="player-card">
+              <span class="player-piece">♔</span>
+              <div><strong>You</strong><small>White</small></div>
+              <span class="turn-mark"></span>
+            </div>
             <div id="board" class="board" aria-label="Chess board"></div>
-            <div class="board-coordinates bottom"><span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span></div>
+            <div class="board-coordinates bottom">
+              <span>a</span><span>b</span><span>c</span><span>d</span
+              ><span>e</span><span>f</span><span>g</span><span>h</span>
+            </div>
           </div>
         </div>
       </section>
